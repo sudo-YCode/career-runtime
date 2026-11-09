@@ -1,0 +1,91 @@
+/* Chaos mode: the hero copy column swaps to an incident console while the scene stays put. */
+.hero > .hero-copy, .hero > .chaos-console { grid-column: 1; grid-row: 1; }
+.hero > .scene-wrap { grid-column: 2; grid-row: 1; }
+.chaos-console { display: none; }
+.hero.chaos > .hero-copy { display: none; }
+.hero.chaos > .chaos-console { display: grid; animation: console-in .45s cubic-bezier(.2, .8, .2, 1); }
+@keyframes console-in { from { opacity: 0; transform: translateY(8px); } }
+
+.chaos-console { grid-template-columns: minmax(0, 1fr); gap: 18px; max-width: 470px; position: relative; z-index: 2; align-content: center; }
+.chaos-console .display-sm { outline: none; }
+.chaos-console .display-sm em { font-style: italic; color: var(--display-em); }
+.c-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.c-eyebrow { display: inline-flex; align-items: center; gap: 9px; color: var(--s-down); }
+.c-exit {
+  font: 500 12px var(--font-mono); color: var(--text-2); cursor: pointer;
+  padding: 5px 12px; border-radius: 999px; border: 1px solid var(--line-3); background: var(--soft);
+  transition: color .2s, border-color .2s, background .2s;
+}
+.c-exit:hover { color: var(--text); border-color: var(--text-3); background: var(--soft-2); }
+.c-dot {
+  width: 8px; height: 8px; border-radius: 50%; background: var(--s-down);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--s-down) 22%, transparent);
+  animation: led 1.2s ease-in-out infinite;
+}
+.c-lede { font-size: 15px; }
+
+.c-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.c-stat {
+  display: grid; gap: 3px; padding: 10px 12px; border-radius: var(--radius-sm);
+  background: var(--soft); border: 1px solid var(--line-2);
+}
+.c-stat b { font: 600 20px/1.1 var(--font-mono); color: var(--text); }
+.c-stat span { font-size: 11.5px; line-height: 1.3; color: var(--text-3); }
+.c-stat.ok b { color: var(--ok); }
+
+.c-panel { padding: 14px 16px; }
+.c-status { font: 500 12px var(--font-mono); }
+.c-status.good { color: var(--ok); }
+.c-status.bad { color: var(--s-down); }
+.clog {
+  list-style: none; margin: 0; padding: 0 4px 0 0;
+  height: 196px; overflow-y: auto; scrollbar-width: thin; overscroll-behavior: contain;
+}
+.cl {
+  display: grid; grid-template-columns: 50px minmax(0, 1fr); gap: 8px; align-items: baseline;
+  padding: 4px 0; border-top: 1px solid var(--line); animation: rec-in .35s ease-out;
+}
+.cl:first-child { border-top: 0; }
+.cl-t { font: 400 11.5px/1.5 var(--font-mono); color: var(--text-3); }
+.cl-svc { font: 600 11.5px/1.5 var(--font-mono); color: var(--text-2); margin-right: 2px; }
+.cl-x { font: 400 12.5px/1.45 var(--font-sans); color: var(--text-2); }
+.cl.crit .cl-x { color: var(--s-down); }
+.cl.warn .cl-x { color: var(--amber); }
+.cl.ok .cl-x { color: var(--ok); }
+
+.c-bar { display: grid; gap: 6px; margin-top: 12px; }
+.c-track { display: block; height: 6px; border-radius: 99px; background: var(--soft-2); overflow: hidden; }
+.c-track i { display: block; height: 100%; width: 0; border-radius: inherit; background: var(--ok); transition: width .4s ease, background .3s; }
+.c-track i.run { background: linear-gradient(90deg, var(--amber-led), var(--ok)); }
+.c-bar-text { font: 500 11.5px var(--font-mono); color: var(--text-3); }
+
+/* The ways in, under the hero buttons: chaos mode (red) and the JD compiler (cyan). */
+/* Side by side when there is room for one-line titles, stacked in the narrow desktop column. */
+.mode-ctas { display: grid; grid-template-columns: repeat(auto-fit, minmax(236px, 1fr)); gap: 8px; max-width: 470px; }
+.mode-cta {
+  --accent: var(--s-down);
+  display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 12px;
+  padding: 8px 14px 8px 8px; border-radius: 14px;
+  text-align: left; cursor: pointer; color: var(--text);
+  background: color-mix(in srgb, var(--accent) 7%, var(--soft));
+  border: 1px solid color-mix(in srgb, var(--accent) 38%, transparent);
+  transition: background .2s, border-color .2s, transform .15s;
+}
+.mode-cta.jd-cta { --accent: var(--cyan); }
+.mode-cta:hover { background: color-mix(in srgb, var(--accent) 13%, var(--soft)); border-color: color-mix(in srgb, var(--accent) 65%, transparent); }
+.mode-cta:active { transform: translateY(1px); }
+.cc-icon { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; background: color-mix(in srgb, var(--accent) 16%, transparent); }
+.cc-icon svg { width: 19px; height: 19px; fill: var(--accent); }
+.jd-cta .cc-icon svg { fill: none; stroke: var(--accent); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.cc-text { display: grid; gap: 1px; }
+.cc-text b { font-weight: 600; font-size: 14.5px; line-height: 1.3; }
+.cc-text small { font-size: 12px; line-height: 1.35; color: var(--text-2); }
+
+@media (max-width: 1100px) {
+  .hero > .scene-wrap { grid-column: 1; grid-row: 2; }
+  .hero.chaos > .scene-wrap { grid-row: 1; }
+  .hero.chaos > .chaos-console { grid-row: 2; max-width: 640px; }
+}
+@media (max-width: 640px) {
+  .c-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

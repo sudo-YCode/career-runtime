@@ -1,0 +1,470 @@
+.hero {
+  display: grid;
+  grid-template-columns: minmax(330px, 0.78fr) minmax(0, 2fr);
+  align-items: center;
+  gap: 8px;
+  padding: 12px var(--gutter) 0;
+  min-height: calc(100vh - 68px - 190px);
+}
+.hero-copy { display: grid; gap: 24px; max-width: 470px; position: relative; z-index: 2; }
+.hero-copy .lede { font-size: 16.5px; }
+.cta { display: flex; gap: 12px; flex-wrap: wrap; }
+.meta { font: 400 12.5px/1.5 var(--font-mono); color: var(--text-3); }
+
+.scene-wrap { position: relative; min-width: 0; }
+.scene { width: 100%; height: auto; max-height: calc(100vh - 150px); display: block; overflow: visible; }
+
+/* Scene: floor */
+.grid-line { stroke: var(--s-grid); stroke-opacity: 0.07; stroke-width: 1; }
+.grid-ring { fill: none; stroke: var(--s-grid); stroke-opacity: 0.16; stroke-width: 1; }
+.grid-ring.dashed { stroke-dasharray: 3 9; stroke-opacity: 0.12; }
+
+/* Scene: ring (a glass tube in the services' colours, drawn in short arcs) */
+.ring-shadow { fill: none; stroke: var(--s-ring); stroke-opacity: 0.08; stroke-width: 30; }
+.ring-glow path { fill: none; stroke-width: 52; stroke-opacity: var(--s-ring-glow); }
+.ring-body path { fill: none; stroke-width: 26; }
+.ring-core path { fill: none; stroke-width: 7; stroke-opacity: var(--s-ring-core); }
+.ring-spec { fill: none; stroke: var(--s-specular); stroke-opacity: var(--s-ring-spec); stroke-width: 1.6; }
+.ring-flow { fill: none; stroke: var(--s-flow); stroke-width: 2.4; opacity: 0; transition: opacity .8s; }
+.scene.streaming .ring-flow { opacity: 0.9; animation: ring-turn 40s linear infinite; }
+@keyframes ring-turn { to { transform: rotate(360deg); } }
+.ring-label { font: 500 13px var(--font-mono); fill: var(--s-label-dim); letter-spacing: 0.02em; }
+
+.cloud circle { animation: twinkle 3s ease-in-out infinite; }
+@keyframes twinkle { 0%, 100% { opacity: 0.15; } 50% { opacity: 0.85; } }
+
+/* Scene: cables from each module to the ring */
+.cable .c-glow { fill: none; stroke-width: 14; stroke-opacity: var(--s-cable-glow); stroke-linecap: round; }
+.cable .c-body { fill: none; stroke-width: 6.5; stroke-opacity: 0.92; stroke-linecap: round; transition: stroke-opacity .3s; }
+.cable .c-shine { fill: none; stroke-width: 1.8; stroke-opacity: 0.85; stroke-linecap: round; transition: stroke-opacity .3s; }
+.cable .c-port { fill: var(--s-metal-top); stroke-width: 1.2; stroke-opacity: 0.75; }
+.cable.sealed .c-body { stroke-opacity: 0.35; }
+.cable.sealed .c-glow { stroke-opacity: 0.05; }
+.cable .breaker { opacity: 0; transition: opacity .25s; pointer-events: none; }
+.cable[data-breaker] .breaker { opacity: 1; }
+.cable[data-breaker='open'] .c-body, .cable[data-breaker='half'] .c-body { stroke-opacity: 0.28; stroke-dasharray: 2 8; }
+.cable[data-breaker='open'] .c-shine, .cable[data-breaker='half'] .c-shine { stroke-opacity: 0.15; }
+.breaker .br-case { fill: var(--panel-solid); stroke-width: 2; stroke: var(--ok); }
+.breaker .br-pin { fill: var(--text); }
+.breaker .br-lever { stroke: var(--text); stroke-width: 2.6; stroke-linecap: round; }
+.cable[data-breaker='open'] .br-case { stroke: var(--s-down); }
+.cable[data-breaker='half'] .br-case { stroke: var(--amber-led); }
+.cable[data-breaker='half'] .br-lever.shut { stroke-dasharray: 3 3; }
+.cable:not([data-breaker='open']) .br-lever.open, .cable[data-breaker='open'] .br-lever.shut { display: none; }
+
+/* Scene: modules (a frosted glass case lit from inside, holding a server rack) */
+.mod { cursor: pointer; outline: none; }
+.mod .lift { transition: transform .45s cubic-bezier(.2, .8, .2, 1); }
+.mod .halo { opacity: var(--s-halo-k); transition: opacity .5s; }
+.halo-down { opacity: 0; transition: opacity .4s; pointer-events: none; }
+.mod .floor-glow { opacity: var(--s-floor-glow); transition: opacity .4s; }
+.mod.sealed .floor-glow { opacity: 0.12; }
+.mod.down .floor-glow, .mod.failed .floor-glow { opacity: 0; }
+.mod .bloom { opacity: var(--s-bloom); transition: opacity .3s; }
+.mod .panes { fill-opacity: var(--s-glass-k); }
+.mod .rim { stroke-opacity: var(--s-rim); stroke-width: var(--s-rim-w); }
+.mod .glass {
+  --rack-top: color-mix(in srgb, var(--mod-hue) var(--s-rack-tint), var(--s-rack-top));
+  --rack-front: color-mix(in srgb, var(--mod-hue) var(--s-rack-tint), var(--s-rack-front));
+  --rack-side: color-mix(in srgb, var(--mod-hue) var(--s-rack-tint), var(--s-rack-side));
+}
+.mod .drawer { fill: color-mix(in srgb, var(--mod-hue) var(--s-drawer-tint), var(--s-drawer)); stroke: var(--s-drawer-edge); stroke-width: 0.8; }
+.mod .drawer-hi { stroke: var(--s-specular); stroke-opacity: var(--s-drawer-hi); stroke-width: 1; stroke-linecap: round; }
+.mod .vent { stroke: var(--s-vent); stroke-opacity: 0.55; stroke-width: 1.1; stroke-linecap: round; }
+.mod .knob { fill: var(--s-drawer-edge); }
+.mod .bevel { fill: none; stroke: var(--s-specular); stroke-opacity: 0.12; stroke-width: 5; stroke-linecap: round; }
+.mod .specular { fill: var(--s-specular); opacity: 0.14; }
+.mod .down-tint { fill: var(--s-down); opacity: 0; pointer-events: none; transition: opacity .3s; }
+.mod .led-halo { opacity: 0.85; transition: opacity .3s; }
+.mod.beat .halo, .mod.hl .halo { opacity: 1; }
+.mod.beat .bloom, .mod.hl .bloom { opacity: 1; transition: none; }
+.mod.beat .lift { transform: translateY(-6px); }
+.mod:hover .lift, .mod.hl .lift, .mod:focus-visible .lift { transform: translateY(-10px); }
+.scene.has-hl .mod:not(.hl) { opacity: 0.45; transition: opacity .3s; }
+.scene.has-hl .mod-label:not(.hl) { opacity: 0.35; }
+.mod .led { animation: led 2.2s ease-in-out infinite; }
+@keyframes led { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+.mod.sealed { cursor: help; }
+.mod.sealed .bloom { opacity: 0.25; }
+.lock-body { fill: var(--s-metal-left); stroke: var(--s-edge); stroke-opacity: .6; }
+.lock-shackle { fill: none; stroke: var(--s-edge); stroke-opacity: .7; stroke-width: 3; }
+
+/* Chaos-mode states: down (killed), failed (a restart crashed), booting, replaying */
+.mod.down, .mod.failed, .hub.down { --led-a: var(--s-down); --led-b: var(--s-down); }
+.mod.booting, .hub.booting { --led-a: var(--amber-led); --led-b: var(--amber-led); }
+.mod.down .down-tint { opacity: 0.34; animation: flicker 1.3s steps(1) infinite; }
+.mod.failed .down-tint { opacity: 0.24; }
+@keyframes flicker { 0%, 100% { opacity: .34; } 12% { opacity: .1; } 16% { opacity: .42; } 52% { opacity: .2; } 58% { opacity: .38; } }
+.mod.down .bloom, .mod.failed .bloom { opacity: 0.08; }
+.mod.booting .bloom { opacity: 0.35; }
+.mod.replaying .bloom { opacity: 1; }
+.mod.down .halo, .mod.failed .halo { opacity: 0.12; }
+.mod.down .halo-down, .mod.failed .halo-down, .hub.down .halo-down { opacity: 1; }
+.mod.down .led-halo, .mod.failed .led-halo, .mod.booting .led-halo { opacity: 0; }
+.mod.down .led, .mod.failed .led, .hub.down .led { animation: led 0.45s steps(1) infinite; }
+.mod.booting .led, .hub.booting .led { animation: led 0.7s ease-in-out infinite; }
+.mod.replaying .led { animation: led 0.3s ease-in-out infinite; }
+.scene.chaos .mod, .scene.chaos .hub { cursor: crosshair; }
+.scene.chaos .mod.sealed { cursor: not-allowed; }
+.scene.chaos .labels { opacity: 0.4; transition: opacity .4s; }
+
+/* Chaos-mode effects: waiting events (beads), lag labels, badges, sparks */
+.bead { transition: transform .28s cubic-bezier(.3, .7, .3, 1); animation: bead-in .3s ease-out; pointer-events: none; }
+.bead.moving { transition: none; animation: none; }
+.bead rect { fill: var(--s-bead); stroke-width: 1.3; }
+.bead line { stroke-width: 1.8; stroke-linecap: round; }
+@keyframes bead-in { from { opacity: 0; } }
+.lag-label {
+  font: 600 13px var(--font-mono); fill: var(--s-down); opacity: 0; transition: opacity .3s; pointer-events: none;
+  paint-order: stroke; stroke: var(--bg); stroke-width: 4px; stroke-linejoin: round;
+}
+.lag-label.on { opacity: 1; }
+.spark { pointer-events: none; }
+.shock { fill: none; stroke: var(--s-down); stroke-width: 2.5; pointer-events: none; }
+.badge { opacity: 0; transition: opacity .25s; pointer-events: none; }
+.badge.on { opacity: 1; }
+.badge .pill, .badge .pin { stroke: var(--bg); stroke-width: 2; }
+.badge-text { font: 700 12.5px var(--font-mono); letter-spacing: 0.08em; fill: #fff; }
+.badge.red .pill, .badge.red .pin { fill: #e5484d; }
+.badge.amber .pill, .badge.amber .pin { fill: #f5a524; }
+.badge.amber .badge-text { fill: #2a1900; }
+.badge.green .pill, .badge.green .pin { fill: #2f9e66; }
+.badge.cyan .pill, .badge.cyan .pin { fill: #0e9fc2; }
+
+/* Scene: hub (scene/hub.ts). Everything that moves here animates transform or opacity only, so it runs on the compositor. */
+.hub { cursor: pointer; outline: none; }
+/* RGB: each lit surface clips a strip of the colour wheel that slides one period (180 units) and repeats. */
+.rgb-slide { animation: rgb-slide 6s linear infinite; }
+@keyframes rgb-slide { to { transform: translateX(180px); } }
+.rgb, .rgb-floor { transition: opacity .4s; }
+.rgb-floor { opacity: var(--s-rgb-floor); }
+.rgb-floor2 { opacity: calc(var(--s-rgb-floor) * 0.5); }
+.rgb-floor3 { opacity: calc(var(--s-rgb-floor) * 0.2); }
+.rgb-glow2 { opacity: var(--s-rgb-glow2); }
+.rgb-glow1 { opacity: var(--s-rgb-glow1); }
+.rgb-core { fill: #fff; opacity: var(--s-rgb-core); }
+/* The consumer inside the glass: a lane to each partition's bin, a rotor, and the records (keyframes from hub.ts). */
+.sorter { pointer-events: none; transition: opacity .4s; }
+.so-anim {
+  animation-duration: var(--so-cycle); animation-timing-function: linear;
+  animation-iteration-count: infinite; animation-delay: var(--so-still);
+}
+.so-plate { fill: none; stroke: var(--s-edge); stroke-opacity: 0.14; stroke-width: 1; }
+.so-lane { stroke-width: 1.5; stroke-opacity: 0.45; stroke-dasharray: 1.5 3.5; stroke-linecap: round; }
+.so-bin { fill: none; stroke-width: 3.4; stroke-linecap: round; stroke-linejoin: round; opacity: 0.3; }
+.so-arm line { stroke: var(--cyan); stroke-width: 2.4; stroke-linecap: round; }
+.so-arm circle { fill: var(--cyan); }
+.so-hub { fill: var(--s-metal-top); stroke: var(--s-edge); stroke-opacity: 0.55; stroke-width: 1.2; }
+.so-rec { stroke-width: 3; stroke-opacity: 0.3; }
+/* After a restart the consumer catches up from its last committed offset, so everything runs fast. */
+.hub.replaying .so-anim { animation-duration: calc(var(--so-cycle) / 2.5); }
+.hub.replaying .rgb-slide { animation-duration: 2.4s; }
+.hub.down .so-anim, .hub.failed .so-anim, .hub.booting .so-anim,
+.hub.down .rgb-slide, .hub.failed .rgb-slide, .hub.booting .rgb-slide { animation-play-state: paused; }
+.hub-halo { transition: opacity .3s; opacity: 0.8; }
+.hub:hover .hub-halo, .hub:focus-visible .hub-halo, .hub.beat .hub-halo { opacity: 1; }
+.hub-text { font: 600 21px var(--font-sans); letter-spacing: 0.32em; fill: var(--s-hub-text); opacity: 0.92; }
+.hub-caption { font: 500 15px var(--font-mono); fill: var(--s-hub-caption); }
+.hub-hint { font: 400 13px var(--font-sans); fill: var(--cyan); opacity: 0; transition: opacity .3s; }
+.hub:hover .hub-hint, .hub:focus-visible .hub-hint { opacity: 1; }
+.hub .led { animation: led 2.2s ease-in-out infinite; }
+.hub.down .rgb, .hub.failed .rgb { opacity: 0.08; }
+.hub.down .rgb-floor, .hub.failed .rgb-floor { opacity: 0; }
+.hub.down .sorter, .hub.failed .sorter { opacity: 0.25; }
+.hub.down .hub-halo { opacity: 0.15; }
+.hub.down .hub-text { fill: var(--s-down); }
+.hub.booting .rgb, .hub.booting .sorter { opacity: 0.45; }
+
+/* Scene: particles */
+.p-dot, .p-halo { pointer-events: none; }
+
+/* Scene: labels */
+.mod-label { pointer-events: none; transition: opacity .3s; }
+.mod-label .leader { fill: none; stroke-width: 1; stroke-opacity: 0.55; }
+.l-name { font: 600 17px var(--font-mono); fill: var(--text); }
+.l-lang { font: 500 14.5px var(--font-sans); }
+.l-co { font: 400 13.5px var(--font-sans); fill: var(--s-label-dim); }
+
+/* Below the hero */
+.below {
+  display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(320px, 1fr); gap: 20px;
+  padding: 32px var(--gutter) 40px;
+}
+.timeline { padding: 16px 0 0; }
+.tl-track { position: relative; height: 40px; border-radius: 10px; background: var(--soft); border: 1px solid var(--line); }
+.tl-seg {
+  position: absolute; top: 5px; bottom: 5px; border-radius: 7px; text-decoration: none;
+  background: color-mix(in srgb, var(--c) 22%, transparent);
+  border: 1px solid color-mix(in srgb, var(--c) 60%, transparent);
+  display: flex; align-items: center; padding: 0 8px; overflow: hidden;
+  font: 500 12px/1 var(--font-sans); color: color-mix(in srgb, var(--c) 40%, var(--mix-text));
+  transition: background .2s, box-shadow .2s;
+}
+.tl-seg span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tl-seg:hover, .tl-seg.hl { background: color-mix(in srgb, var(--c) 40%, transparent); box-shadow: 0 0 18px -2px var(--c); }
+.tl-seg.sealed { background: repeating-linear-gradient(135deg, rgba(125, 135, 150, 0.18) 0 6px, transparent 6px 12px); }
+.tl-years { position: relative; height: 22px; margin-top: 8px; }
+.tl-years span { position: absolute; transform: translateX(-50%); font: 400 12px var(--font-mono); color: var(--text-3); }
+.tl-years span::before { content: ''; position: absolute; left: 50%; top: -9px; height: 5px; border-left: 1px solid var(--line-3); }
+
+/* The timeline and the on-call panel on the left, the career log down the right. */
+.below { grid-template-rows: auto 1fr; }
+.below > .timeline { grid-column: 1; grid-row: 1; }
+.below > .oncall { grid-column: 1; grid-row: 2; }
+.below > .kafka { grid-column: 2; grid-row: 1 / span 2; }
+
+/* HUD panels below the hero (on call, Kafka): a cut-corner frame with a cyan-to-violet edge, a dot grid and
+   corner brackets instead of a box. */
+.hud {
+  --cut: 22px; --oc-bg: var(--panel-solid); --oc-a: var(--cyan); --oc-b: #8f6cf7;
+  position: relative; padding: 1px; min-width: 0;
+  clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut));
+  background: linear-gradient(135deg, var(--oc-a), color-mix(in srgb, var(--oc-a) 30%, var(--line-2)) 16%, var(--line-2) 42%,
+    var(--line-2) 62%, color-mix(in srgb, var(--oc-b) 35%, var(--line-2)) 86%, var(--oc-b));
+}
+/* The panel's face sits 1px inside the edge; its cut is 0.6px shorter so the diagonal edges stay 1px too. */
+.hud-inner {
+  position: relative; height: 100%;
+  clip-path: polygon(calc(var(--cut) - .6px) 0, 100% 0, 100% calc(100% - var(--cut) + .6px), calc(100% - var(--cut) + .6px) 100%, 0 100%, 0 calc(var(--cut) - .6px));
+  background:
+    radial-gradient(120% 90% at 0% 0%, color-mix(in srgb, var(--oc-a) 10%, transparent), transparent 55%),
+    radial-gradient(90% 80% at 100% 100%, color-mix(in srgb, var(--oc-b) 9%, transparent), transparent 60%),
+    var(--oc-bg);
+}
+.hud-inner::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none; opacity: .55;
+  background: radial-gradient(circle, color-mix(in srgb, var(--oc-a) 32%, transparent) 1px, transparent 1.6px) 0 0 / 16px 16px;
+  -webkit-mask-image: linear-gradient(to left, #000, transparent 72%);
+  mask-image: linear-gradient(to left, #000, transparent 72%);
+}
+.hud-corner { position: absolute; width: 14px; height: 14px; border: 0 solid var(--oc-a); pointer-events: none; }
+.hud-corner.tr { top: 9px; right: 9px; border-top-width: 2px; border-right-width: 2px; }
+.hud-corner.bl { bottom: 9px; left: 9px; border-bottom-width: 2px; border-left-width: 2px; border-color: var(--oc-b); }
+.hud-tag {
+  font: 700 11px/1 var(--font-mono); letter-spacing: .2em; text-transform: uppercase; color: #03222b; background: #7ee3f6;
+  padding: 6px 16px 6px 12px; clip-path: polygon(0 0, 100% 0, calc(100% - 8px) 100%, 0 100%); flex: none;
+}
+
+/* On call (ui/overview.ts): the engineer in a hexagon with a scan line, and readouts in mono. The scan line and
+   the live dot are transform/opacity animations and pause while the panel is off screen. */
+.oncall { min-height: 272px; }
+.oc-inner { display: grid; grid-template-columns: 214px minmax(0, 1fr); }
+
+/* The engineer, in a hexagon. */
+.oc-face { margin: 0; position: relative; padding: 16px 4px 12px 22px; display: grid; align-content: center; gap: 8px; }
+.oc-hexwrap { position: relative; aspect-ratio: 5 / 6; }
+.oc-hex {
+  position: absolute; inset: 0; overflow: hidden; background: #05090d;
+  clip-path: polygon(50% 1%, 99% 24%, 99% 76%, 50% 99%, 1% 76%, 1% 24%);
+}
+.oc-hex img {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 4%;
+  opacity: 0; transition: opacity .5s ease;
+}
+.oc-face.ready .oc-hex img { opacity: 1; }
+.oc-hex::after { content: ''; position: absolute; inset: 58% 0 0 0; background: linear-gradient(transparent, color-mix(in srgb, var(--oc-bg) 70%, transparent)); }
+.oc-scan {
+  position: absolute; left: 0; right: 0; top: 0; height: 22%; transform: translateY(-110%); z-index: 1; pointer-events: none;
+  background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--oc-a) 18%, transparent) 72%, color-mix(in srgb, var(--oc-a) 85%, transparent) 97%, transparent);
+  animation: oc-scan 6s cubic-bezier(.45, 0, .55, 1) infinite;
+}
+@keyframes oc-scan {
+  0% { transform: translateY(-110%); opacity: 0; }
+  5% { opacity: 1; }
+  40% { transform: translateY(470%); opacity: 1; }
+  44%, 100% { transform: translateY(470%); opacity: 0; }
+}
+.oc-hexline { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.oc-hexline * { fill: none; vector-effect: non-scaling-stroke; }
+.oc-hexline .glow { stroke: var(--oc-a); stroke-opacity: .22; stroke-width: 7; }
+.oc-hexline .edge { stroke: var(--oc-a); stroke-width: 1.4; }
+.oc-hexline .ret { stroke: var(--oc-a); stroke-opacity: .85; stroke-width: 1.3; }
+.oc-hexline .tick { stroke: var(--oc-b); stroke-width: 2; }
+.oc-cap { display: flex; justify-content: center; font: 600 10px/1 var(--font-mono); letter-spacing: .2em; text-transform: uppercase; color: var(--text-3); }
+.oc-cap span { padding: 3px 10px; }
+.oc-cap span:first-child { color: var(--oc-a); border-right: 1px solid var(--line-3); }
+
+/* Readouts. */
+.oc-body { position: relative; padding: 16px 28px 16px 8px; display: grid; gap: 10px; align-content: start; min-width: 0; }
+.oc-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.oc-path { font: 500 12px var(--font-mono); color: var(--text-3); }
+.oc-live { margin-left: auto; display: inline-flex; align-items: center; gap: 7px; font: 600 10.5px var(--font-mono); letter-spacing: .18em; text-transform: uppercase; color: var(--ok); }
+.oc-live::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 10px var(--ok); animation: led 1.8s ease-in-out infinite; }
+.oc-list { display: grid; grid-template-columns: auto minmax(0, 1fr); margin: 0; }
+.oc-list dt, .oc-list dd { padding: 3.5px 0; border-bottom: 1px dashed color-mix(in srgb, var(--oc-a) 20%, var(--line-2)); }
+.oc-list dt:last-of-type, .oc-list dd:last-of-type { border-bottom: 0; }
+.oc-list dt {
+  display: flex; align-items: center; gap: 9px; padding-right: 20px;
+  font: 600 10.5px/1.6 var(--font-mono); letter-spacing: .18em; text-transform: uppercase; color: var(--text-3);
+}
+.oc-list dt::before { content: ''; width: 5px; height: 5px; background: var(--oc-a); transform: rotate(45deg); opacity: .8; flex: none; }
+.oc-list dd { margin: 0; font-size: 13.5px; line-height: 1.55; color: var(--text-2); overflow-wrap: anywhere; }
+.oc-list a { color: var(--cyan); text-decoration: none; }
+.oc-list a:hover { text-decoration: underline; }
+.oc-up { display: inline-flex; align-items: center; gap: 9px; color: var(--ok); }
+.oc-up::before { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 4px color-mix(in srgb, var(--ok) 22%, transparent); }
+.oc-tz { font: 400 13px var(--font-mono); color: var(--text-3); margin-right: 14px; white-space: nowrap; }
+.oc-tz b { font-weight: 600; color: var(--text-2); }
+.oc-tz:first-child b { color: var(--cyan); }
+.oc-geo { font: 400 12px var(--font-mono); color: var(--text-3); margin-left: 10px; white-space: nowrap; }
+.oc-cta { display: flex; gap: 10px; margin-top: 2px; flex-wrap: wrap; }
+.oc-btn {
+  --c: 9px; display: inline-flex; align-items: center; padding: 9px 20px; text-decoration: none;
+  font: 600 13.5px/1 var(--font-sans); letter-spacing: .02em;
+  clip-path: polygon(var(--c) 0, 100% 0, 100% calc(100% - var(--c)), calc(100% - var(--c)) 100%, 0 100%, 0 var(--c));
+  transition: filter .2s, transform .15s;
+}
+.oc-btn.primary { background: #7ee3f6; color: #03222b; }
+.oc-btn.ghost { color: var(--text); background: color-mix(in srgb, var(--oc-a) 12%, transparent); box-shadow: inset 2px 0 0 var(--oc-a); }
+.oc-btn:hover { filter: brightness(1.12); }
+.oc-btn:active { transform: translateY(1px); }
+.oc-btn:focus-visible { outline: 2px solid var(--text); outline-offset: -5px; border-radius: 0; }
+
+/* Kafka (ui/kafka.ts): the career log as one partition replicated on three brokers, with the high watermark,
+   the write head, career-core's committed offset, the log segments, and a console consumer underneath.
+   Slots fill with a scale-in, markers glide on `translate`, the write head blinks: all compositor work. */
+.kafka { min-height: 272px; }
+.k-inner { display: flex; flex-direction: column; gap: 11px; padding: 16px 24px 18px; }
+.k-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; position: relative; }
+.k-path { font: 500 12px var(--font-mono); color: var(--text-3); }
+.k-ctl { margin-left: auto; display: inline-flex; align-items: baseline; gap: 12px; font: 500 12px var(--font-mono); }
+.k-count { color: var(--text-3); }
+.k-btn { font: 600 12px var(--font-mono); color: var(--cyan); background: none; border: 0; padding: 0; cursor: pointer; }
+.k-btn:hover { text-decoration: underline; }
+
+/* Lanes: broker labels on the left; the partition, its offsets, segments and consumer on the right. */
+.k-viz {
+  --row: 20px; --gap: 3px;
+  display: grid; grid-template-columns: 82px minmax(0, 1fr); grid-template-rows: repeat(3, var(--row)) 14px 17px 13px;
+  row-gap: 5px; column-gap: 10px; margin-top: 8px; position: relative;
+}
+.k-label {
+  grid-column: 1; display: flex; align-items: center; gap: 7px; white-space: nowrap;
+  font: 600 10.5px/1 var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--text-2);
+}
+.k-label::before { content: ''; width: 6px; height: 6px; transform: rotate(45deg); border: 1.5px solid var(--oc-a); flex: none; }
+.k-label.lead::before { background: var(--oc-a); }
+.k-label i { font-style: normal; font-weight: 500; letter-spacing: .04em; text-transform: none; color: var(--text-3); }
+.k-label.dim { color: var(--text-3); font-weight: 500; font-size: 9.5px; }
+.k-label.dim::before { border-color: var(--line-3); width: 4px; height: 4px; }
+.k-lanes {
+  grid-column: 2; grid-row: 1 / -1; position: relative; container-type: inline-size; min-width: 0;
+  display: grid; grid-template-rows: repeat(3, var(--row)) 14px 17px 13px; row-gap: 5px;
+}
+.k-lane, .k-offsets { display: grid; grid-template-columns: repeat(14, minmax(0, 1fr)); gap: var(--gap); }
+
+/* A slot: hollow until its replica has the record, then the producing service's colour. */
+.k-cell {
+  --k: 4px; position: relative; display: block; min-width: 0; padding: 0; border: 0; font: inherit;
+  clip-path: polygon(var(--k) 0, 100% 0, 100% calc(100% - var(--k)), calc(100% - var(--k)) 100%, 0 100%, 0 var(--k));
+  background: color-mix(in srgb, var(--oc-a) 7%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--oc-a) 20%, transparent);
+}
+.k-cell.on {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--c) 62%, #fff), var(--c) 48%, color-mix(in srgb, var(--c) 72%, #000));
+  box-shadow: none; animation: k-in .45s cubic-bezier(.2, .8, .2, 1);
+}
+.k-lane:not(.lead) .k-cell.on { opacity: .72; }
+@keyframes k-in { from { transform: scaleY(.15); opacity: .15; } }
+button.k-cell { cursor: default; }
+button.k-cell:not(:disabled) { cursor: pointer; }
+button.k-cell:not(:disabled):hover { filter: brightness(1.25); }
+button.k-cell:focus-visible { outline: 2px solid var(--text); outline-offset: -2px; }
+
+.k-offsets span { font: 500 9.5px/14px var(--font-mono); color: var(--text-3); text-align: center; }
+
+/* Segment files under the offsets, as brackets; the one being written to is lit. */
+.k-segs { position: relative; }
+.k-seg {
+  position: absolute; top: 0; bottom: 0;
+  left: calc(var(--s) * (100% + var(--gap)) / 14); width: calc(var(--n) * (100% + var(--gap)) / 14 - var(--gap));
+  border: 1px solid var(--line-3); border-top: 0; border-radius: 0 0 3px 3px;
+  font: 500 9px/15px var(--font-mono); color: var(--text-3); text-align: center;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color .3s, border-color .3s;
+}
+.k-seg.active { border-color: var(--oc-a); color: var(--oc-a); }
+
+/* Markers, placed on the boundary after the last slot they cover. */
+.k-hw, .k-leo, .k-commit { position: absolute; left: 0; top: 0; pointer-events: none; }
+.k-hw {
+  top: -10px; width: 2px; height: calc(var(--row) * 3 + 10px + 14px); background: var(--oc-b); box-shadow: 0 0 8px var(--oc-b);
+  translate: calc(var(--hw, 0) * (100cqw + var(--gap)) / 14 - var(--gap) / 2 - 1px) 0;
+  transition: translate .35s cubic-bezier(.2, .8, .2, 1);
+}
+.k-hw::before {
+  content: 'HW'; position: absolute; top: -1px; left: 4px;
+  font: 700 8.5px/1 var(--font-mono); letter-spacing: .12em; color: var(--oc-b);
+}
+.k-leo {
+  top: -3px; width: 2px; height: calc(var(--row) + 6px); background: var(--text); box-shadow: 0 0 8px var(--oc-a);
+  translate: calc(var(--leo, 0) * (100cqw + var(--gap)) / 14 - var(--gap) / 2 - 1px) 0;
+  transition: translate .3s ease; animation: k-blink 1.1s steps(2, jump-none) infinite;
+}
+@keyframes k-blink { 50% { opacity: .15; } }
+.k-cons { position: relative; }
+.k-commit {
+  width: 0; height: 0; border-left: 6px solid transparent; border-right: 6px solid transparent; border-bottom: 9px solid var(--oc-a);
+  translate: calc(var(--co, 0) * (100cqw + var(--gap)) / 14 - var(--gap) / 2 - 6px) 2px;
+  transition: translate .5s cubic-bezier(.2, .8, .2, 1);
+  filter: drop-shadow(0 0 4px var(--oc-a));
+}
+
+.k-legend {
+  display: flex; justify-content: space-between; gap: 12px; padding-top: 8px;
+  border-top: 1px dashed color-mix(in srgb, var(--oc-a) 20%, var(--line-2));
+  font: 500 11px/1.4 var(--font-mono); color: var(--text-3);
+}
+.k-stat { color: var(--text-2); }
+
+/* The console consumer: what career-core has read, oldest first. */
+.k-console {
+  flex: 1 1 0; min-height: 150px; display: flex; flex-direction: column;
+  background: color-mix(in srgb, #000 28%, var(--oc-bg));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--oc-a) 18%, var(--line-2));
+  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+}
+:root[data-theme='light'] .k-console { background: color-mix(in srgb, var(--oc-a) 5%, #f5f8fb); }
+.k-cmd {
+  font: 500 10.5px/1.4 var(--font-mono); color: var(--text-3); padding: 8px 14px 7px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  border-bottom: 1px dashed color-mix(in srgb, var(--oc-a) 16%, var(--line-2));
+}
+.k-cmd b { color: var(--ok); font-weight: 700; }
+.k-out { list-style: none; margin: 0; padding: 4px 14px 8px; overflow-y: auto; flex: 1 1 0; min-height: 0; scrollbar-width: thin; overscroll-behavior: contain; }
+.k-line {
+  display: grid; grid-template-columns: 20px 96px 56px minmax(0, 1fr); gap: 10px; align-items: baseline;
+  padding: 3px 6px; margin: 0 -6px; animation: k-line-in .4s ease-out;
+}
+.k-off, .k-key, .k-when { font: 400 11.5px/1.5 var(--font-mono); white-space: nowrap; }
+.k-off { color: var(--text-3); text-align: right; }
+.k-key { color: var(--c); overflow: hidden; text-overflow: ellipsis; }
+.k-when { color: var(--text-3); }
+.k-val { font: 400 13px/1.45 var(--font-sans); color: var(--text-2); }
+.k-line:last-child .k-val { color: var(--text); }
+.k-line.picked { background: color-mix(in srgb, var(--c) 14%, transparent); }
+@keyframes k-line-in { from { opacity: 0; transform: translateY(4px); } }
+/* Off screen the partition still updates, but without its transitions and entry animations. */
+.kafka.paused .k-hw, .kafka.paused .k-leo, .kafka.paused .k-commit, .kafka.paused .k-seg { transition: none; }
+.kafka.paused .k-cell.on, .kafka.paused .k-line { animation: none; }
+
+
+@media (max-width: 1100px) {
+  .hero { grid-template-columns: 1fr; min-height: 0; padding-top: 32px; }
+  .hero-copy { max-width: 640px; }
+  .below { grid-template-columns: 1fr; grid-template-rows: none; }
+  .below > .timeline, .below > .oncall, .below > .kafka { grid-column: auto; grid-row: auto; }
+}
+@media (max-width: 640px) {
+  .labels, .ring-label, .hub-hint, .lag-label { display: none; }
+  .oc-inner { grid-template-columns: 1fr; }
+  .oc-face { padding: 26px 0 4px; justify-items: center; }
+  .oc-hexwrap { width: min(220px, 62vw); }
+  .oc-body { padding: 10px 20px 26px; }
+  .k-viz { grid-template-columns: 68px minmax(0, 1fr); column-gap: 8px; }
+  .k-label.dim { letter-spacing: .05em; font-size: 9px; }
+  .k-label i { display: none; }
+  .k-line { grid-template-columns: 22px 62px minmax(0, 1fr); }
+  .k-line .k-key { display: none; }
+  .k-when { color: var(--c); }
+  .k-legend { flex-direction: column; gap: 2px; }
+}

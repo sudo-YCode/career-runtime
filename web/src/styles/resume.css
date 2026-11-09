@@ -1,0 +1,85 @@
+.resume { max-width: 860px; margin: 0 auto; padding: 32px var(--gutter) 48px; display: grid; gap: 30px; }
+.resume-actions { display: flex; justify-content: space-between; gap: 12px; }
+.r-head { display: grid; gap: 8px; padding-bottom: 24px; border-bottom: 1px solid var(--line-2); }
+.r-title { font-size: 19px; color: var(--text); }
+.r-contact, .r-avail { color: var(--text-2); font-size: 14.5px; }
+.r-contact a { color: var(--cyan); text-decoration: none; }
+.resume section { display: grid; gap: 12px; }
+.resume h2 { font: 500 12.5px var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-3); }
+.resume p, .resume li, .resume dd { color: var(--text-2); }
+.resume ul { margin: 0; padding-left: 18px; display: grid; gap: 7px; }
+.r-job { display: grid; gap: 6px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.r-job:last-child { border-bottom: 0; }
+.r-job-head { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; flex-wrap: wrap; }
+.r-job h3 { font-size: 17px; font-weight: 600; }
+.r-dates { font: 400 13px var(--font-mono); color: var(--text-3); }
+.r-role { color: var(--text) !important; font-size: 14.5px; }
+.r-skills { display: grid; grid-template-columns: minmax(150px, auto) 1fr; gap: 8px 20px; margin: 0; }
+.r-skills dt { color: var(--text); font-weight: 600; font-size: 14px; }
+.r-skills dd { margin: 0; font-size: 14px; }
+.r-foot { font: 400 12px var(--font-mono); color: var(--text-3) !important; }
+
+@media (max-width: 640px) { .r-skills { grid-template-columns: 1fr; } }
+
+/* The portrait. Its edges that face the page fade out through a mask, so the page's own background and
+   grid show through and no edge of the picture is ever visible; the edges at the window's border stay. */
+.r-portrait { margin: 0; pointer-events: none; }
+.r-portrait img { display: block; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .5s ease; }
+.r-portrait.ready img { opacity: 1; }
+/* A transform on the view would make it, not the window, the box the fixed portrait is placed in. */
+#view-resume { transform: none !important; }
+
+/* Wide screens: a bust fixed at the top right, about a third of the width. It stays while the résumé scrolls,
+   but at a supporting size: the text is what a reader came for. Every edge that faces the page fades out. */
+@media screen and (min-width: 1101px) {
+  :root { --portrait-w: min(34vw, 560px); }
+  .r-portrait {
+    position: fixed; top: 68px; right: 0; width: var(--portrait-w); height: min(72vh, 660px); z-index: 0;
+    --fade-x: linear-gradient(to right, transparent 0%, rgb(0 0 0 / .14) 9%, rgb(0 0 0 / .5) 19%, rgb(0 0 0 / .86) 29%, #000 37%);
+    --fade-y: linear-gradient(to bottom, transparent 0%, rgb(0 0 0 / .5) 7%, #000 16%, #000 58%, rgb(0 0 0 / .45) 80%, transparent 100%);
+    -webkit-mask-image: var(--fade-x), var(--fade-y);
+    -webkit-mask-composite: source-in;
+    mask-image: var(--fade-x), var(--fade-y);
+    mask-composite: intersect;
+  }
+  /* The picture is dark, so on the light page it dissolves over a longer distance. */
+  :root[data-theme='light'] .r-portrait {
+    --fade-x: linear-gradient(to right, transparent 0%, rgb(0 0 0 / .1) 10%, rgb(0 0 0 / .38) 21%, rgb(0 0 0 / .75) 32%, #000 44%);
+    --fade-y: linear-gradient(to bottom, transparent 0%, rgb(0 0 0 / .4) 9%, #000 22%, #000 55%, rgb(0 0 0 / .4) 78%, transparent 100%);
+  }
+  .r-portrait img { object-position: 47% 20%; }
+  /* The text column ends where the fade starts. */
+  .resume {
+    position: relative; z-index: 1;
+    width: min(760px, calc(100vw - var(--portrait-w) * .9 - var(--gutter) * 2));
+    max-width: none; padding-left: 0; padding-right: 0;
+    margin: 0 0 0 max(var(--gutter), calc((100vw - var(--portrait-w) * .9 - 760px) / 2));
+  }
+}
+
+/* Narrow screens: a banner above the résumé, fading into the page below it. */
+@media screen and (max-width: 1100px) {
+  .r-portrait {
+    height: clamp(260px, 78vw, 480px);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 52%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0%, #000 12%, #000 52%, transparent 100%);
+  }
+  .r-portrait img { object-position: 50% 26%; }
+  .r-portrait + .resume { position: relative; margin-top: -48px; }
+}
+
+@media print {
+  @page { margin: 14mm; }
+  :root { color-scheme: light; }
+  body { background: #fff !important; color: #111; font-size: 11pt; }
+  .nav, .foot, .no-print, .skip, #view-overview, #view-service, #view-decisions { display: none !important; }
+  #view-resume { display: block !important; }
+  .resume { padding: 0; gap: 14px; max-width: none; }
+  .display { font-size: 28pt; color: #000; }
+  .r-title, .r-role, .r-job h3, .r-skills dt { color: #000 !important; }
+  .resume p, .resume li, .resume dd, .r-contact, .r-avail { color: #222 !important; }
+  .resume h2, .r-dates { color: #555 !important; }
+  .r-contact a { color: #000; }
+  .r-head, .r-job { border-color: #ddd; }
+  .r-job { break-inside: avoid; }
+}
